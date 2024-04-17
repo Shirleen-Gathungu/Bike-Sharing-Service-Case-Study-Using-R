@@ -107,50 +107,18 @@ group_by(member_casual, weekday) %>% #groups by usertype and weekday
             ,average_duration = mean(ride_length)) %>% # calculates the average duration
 arrange(member_casual, weekday)
 
-#visualizing the number of rides by rider type
-
+# Visualizing the number of rides by rider type
 all_trips_v2 %>%
- mutate(weekday = wday(started_at, label = TRUE)) %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
   group_by(member_casual, weekday) %>%
   summarise(number_of_rides = n(),
             average_duration = mean(ride_length)) %>%
-arrange(member_casual, weekday) %>%
+  arrange(member_casual, weekday) %>%
   ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
   geom_col(position = "dodge") +
-  labs(y = "Number of Rides") +
+  labs(title = "Number of Rides by Rider Type and Weekday",  # Adding a title
+       y = "Number of Rides") +
   scale_y_continuous(labels = scales::comma)
-
-
-# Filter the dataset to include relevant columns
-rides_data <- all_trips_v2 %>%
-  select(started_at, member_casual)
-
-# Convert started_at to Date format if it's not already
-rides_data$started_at <- as.Date(rides_data$started_at)
-
-# Group by member_casual and month
-rides_summary <- rides_data %>%
-  mutate(month = format(started_at, "%Y-%m")) %>%
-  group_by(member_casual, month) %>%
-  summarise(total_rides = n()) %>%
-  ungroup()
-
-# Calculate the average number of rides per month for each group
-average_rides <- rides_summary %>%
-  group_by(member_casual) %>%
-  summarise(average_rides_per_month = mean(total_rides))
-
-# Print the results
-print(average_rides)
-
-#visualizing the data to show average number of rides per month for each group
-ggplot(rides_summary, aes(x = month, y = total_rides, fill = member_casual)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Average Number of Rides per Month",
-       x = "Month",
-       y = "Total Rides") +
-  theme_minimal()
-
 
 # 2. Duration of bike rides taken by annual members and casual riders
 # Calculate the duration of each ride
@@ -167,6 +135,11 @@ duration_data <- all_trips_v2 %>%
 average_duration <- duration_data %>%
   group_by(member_casual) %>%
   summarise(average_ride_duration = mean(ride_length, na.rm = TRUE))
+
+# Print the results in minutes
+print(paste("Average Ride Duration (minutes):"))
+print(average_duration)
+
 
 # Create a bar plot to visualize the average ride duration for each user type
 ggplot(average_duration, aes(x = member_casual, y = average_ride_duration, fill = member_casual)) +
