@@ -5,6 +5,7 @@ riders_data2020 <- read.csv('Divvy_Trips_2020_Q1.csv')
 View(riders_data2020)
 
 
+
 # making columns consistent by renaming column in 2019 dataset
 
 (riders_data2019 <- rename(riders_data2019
